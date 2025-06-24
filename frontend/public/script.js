@@ -16,6 +16,7 @@ const typingIndicator = document.getElementById('typing-indicator');
 
 let currentUsername = '';
 let typingTimer;
+let voiceChat;
 
 // Event listeners
 joinBtn.addEventListener('click', joinChat);
@@ -43,6 +44,9 @@ function joinChat() {
         
         // Focus message input
         messageInput.focus();
+        
+        // Initialize voice chat after joining
+        voiceChat = new VoiceChat(socket);
     }
 }
 
@@ -125,6 +129,15 @@ function updateUsersList(users) {
         }
         usersList.appendChild(li);
     });
+    
+    // Enable/disable voice call based on available users
+    if (voiceChat) {
+        if (users.length > 1) {
+            voiceChat.enableVoiceCall();
+        } else {
+            voiceChat.disableVoiceCall();
+        }
+    }
 }
 
 function escapeHtml(text) {

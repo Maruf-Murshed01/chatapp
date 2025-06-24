@@ -70,6 +70,60 @@ io.on('connection', (socket) => {
         }
     });
 
+    // Voice Chat Events
+    socket.on('request-voice-call', (data) => {
+        const callerUsername = connectedUsers.get(socket.id);
+        if (callerUsername) {
+            const targetSocketId = Array.from(connectedUsers.entries())
+                .find(([id, username]) => username === data.targetUsername)?.[0];
+            
+            if (targetSocketId) {
+                io.to(targetSocketId).emit('incoming-voice-call', {
+                    callerUsername,
+                    callerId: socket.id
+                });
+            }
+        }
+    });
+
+    socket.on('accept-voice-call', (data) => {
+        io.to(data.callerId).emit('voice-call-accepted', {
+            accepterId: socket.id
+        });
+    });
+
+    socket.on('reject-voice-call', (data) => {
+        io.to(data.callerId).emit('voice-call-rejected');
+    });
+
+    socket.on('end-voice-call', (data) => {
+        if (data.targetId) {
+            io.to(data.targetId).emit('voice-call-ended');
+        }
+    });
+
+    // WebRTC signaling events
+    socket.on('webrtc-offer', (data) => {
+        io.to(data.targetId).emit('webrtc-offer', {
+            offer: data.offer,
+            senderId: socket.id
+        });
+    });
+
+    socket.on('webrtc-answer', (data) => {
+        io.to(data.targetId).emit('webrtc-answer', {
+            answer: data.answer,
+            senderId: socket.id
+        });
+    });
+
+    socket.on('webrtc-ice-candidate', (data) => {
+        io.to(data.targetId).emit('webrtc-ice-candidate', {
+            candidate: data.candidate,
+            senderId: socket.id
+        });
+    });
+
     // Handle disconnection
     socket.on('disconnect', () => {
         const username = connectedUsers.get(socket.id);

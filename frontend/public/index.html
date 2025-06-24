@@ -45,12 +45,43 @@
                         <button id="send-btn">Send</button>
                     </div>
                 </div>
+
+                <!-- Voice Chat Controls -->
+                <div class="voice-chat-controls">
+                    <button id="voice-call-btn" class="voice-btn" disabled>
+                        🎤 Start Voice Chat
+                    </button>
+                    <button id="mute-btn" class="voice-btn hidden">
+                        🔇 Mute
+                    </button>
+                    <button id="end-call-btn" class="voice-btn hidden">
+                        📞 End Call
+                    </button>
+                    <div id="call-status" class="call-status"></div>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Socket.IO from CDN -->
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="voice-chat.js"></script>
     <script src="script.js"></script>
+
+    <!-- Voice Call Modal -->
+    <div id="incoming-call-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3>Incoming Voice Call</h3>
+            <p>Call from: <strong id="caller-name"></strong></p>
+            <div class="modal-buttons">
+                <button id="accept-call-btn" class="accept-btn">Accept</button>
+                <button id="reject-call-btn" class="reject-btn">Reject</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio elements for voice chat -->
+    <audio id="local-audio" muted autoplay></audio>
+    <audio id="remote-audio" autoplay></audio>
 </body>
 </html> 
